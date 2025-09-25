@@ -4,13 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-packages = [{include = "lesson_35"}]
+packages = [{include = "config"}, {include = "library"}, {include = "users"}]
 
 [tool.poetry.dependencies]
 python = "^3.13"
 django = "^5.2.6"
 djangorestframework = "^3.16.1"
-psycopg2 = "^2.9.10"
+psycopg2-binary = "^2.9.10"
 pillow = "^11.3.0"
 django-filter = "^25.1"
 flake8 = "^7.3.0"
