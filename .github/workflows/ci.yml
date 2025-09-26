@@ -116,8 +116,21 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            sudo fuser -k 80/tcp || true
+            docker ps --filter "publish=80" --format "{{.ID}}" | xargs -r docker stop
+            docker ps -a --filter "publish=80" --format "{{.ID}}" | xargs -r docker rm
+            docker stop lesson_32.5_practice || true
+            docker rm lesson_32.5_practice || true
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
-            docker stop myapp || true
-            docker rm myapp || true
-            docker run -d --name myapp -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            docker run -d \
+            --name lesson_35_2_practice \
+            -p 80:8000 \
+            -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            -e DEBUG=False \
+            -e DB_NAME=${{ secrets.DB_NAME }} \
+            -e DB_USER=${{ secrets.DB_USER }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
           EOF
